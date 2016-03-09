@@ -1,6 +1,7 @@
 var minesweeperXlApp = angular.module('minesweeperXlApp', [
   'ngRoute',
-  'Ctrl'
+  'Ctrl',
+  'Filters'
 ]);
 
 minesweeperXlApp.config(['$routeProvider',

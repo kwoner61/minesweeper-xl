@@ -12,6 +12,7 @@ ctrl.controller('MainCtrl', ['$scope',
         for (var j=0; j<10; ++j) {
           var cell = {};
           cell.isHidden = true;
+          cell.isEmpty = false;
           row.cells.push(cell);
         }
         mineField.rows.push(row);
