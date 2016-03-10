@@ -12,7 +12,7 @@ ctrl.controller('MainCtrl', ['$scope',
         for (var j=0; j<10; ++j) {
           var cell = {};
           cell.isHidden = true;
-          cell.isEmpty = false;
+          cell.isEmpty = true;
           row.cells.push(cell);
         }
         mineField.rows.push(row);
@@ -21,5 +21,36 @@ ctrl.controller('MainCtrl', ['$scope',
     };
 
     $scope.mineField = $scope.createMineField();
+
+    $scope.plantMine = function(row, column) {
+      $scope.mineField.rows[row].cells[column].isEmpty = false;
+
+    }
+
+    $scope.generateMines = function() {
+      // Generate 20 random locations (row, column)
+      // No repeats!
+      var mineCoordinates = {};
+      var numMines = 0;
+      while (numMines < 20) {
+        var row = Math.floor(Math.random() * 10);
+        var column = Math.floor(Math.random() * 10);
+        var key = "";
+        key += row + ",";
+        key += column;
+
+        if (!mineCoordinates[key]) {
+          mineCoordinates[key] = 1;
+          $scope.plantMine(row, column);
+          numMines++;
+        }
+
+      }
+    }
+
+    $scope.generateMines();
+
+
+
   }
 ]);
