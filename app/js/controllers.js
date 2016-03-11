@@ -13,6 +13,7 @@ ctrl.controller('MainCtrl', ['$scope',
           var cell = {};
           cell.isHidden = true;
           cell.isEmpty = true;
+          cell.number = 0;
           row.cells.push(cell);
         }
         mineField.rows.push(row);
@@ -20,16 +21,15 @@ ctrl.controller('MainCtrl', ['$scope',
       return mineField;
     };
 
-    $scope.mineField = $scope.createMineField();
+    $scope.getCell = function(row, column) {
+      return $scope.mineField.rows[row].cells[column];
+    }
 
     $scope.plantMine = function(row, column) {
       $scope.mineField.rows[row].cells[column].isEmpty = false;
-
     }
 
     $scope.generateMines = function() {
-      // Generate 20 random locations (row, column)
-      // No repeats!
       var mineCoordinates = {};
       var numMines = 0;
       while (numMines < 20) {
@@ -44,13 +44,85 @@ ctrl.controller('MainCtrl', ['$scope',
           $scope.plantMine(row, column);
           numMines++;
         }
+      }
+      return mineCoordinates;
+    }
+
+    $scope.validCell = function(row, column) {
+      return row>=0 && row<10 && column>=0 && column<10;
+    }
+
+    $scope.countNeighborMines = function(row, column) {
+      var numNeighborMines = 0;
+      if ( $scope.validCell(row, column-1) && !$scope.getCell(row, column-1).isEmpty )
+        numNeighborMines++;
+
+      if ( $scope.validCell(row-1, column-1) && !$scope.getCell(row-1, column-1).isEmpty )
+        numNeighborMines++;
+
+      if ( $scope.validCell(row-1, column) && !$scope.getCell(row-1, column).isEmpty )
+        numNeighborMines++;
+
+      if ( $scope.validCell(row-1, column+1) && !$scope.getCell(row-1, column+1).isEmpty )
+        numNeighborMines++;
+
+      if ( $scope.validCell(row, column+1) && !$scope.getCell(row, column+1).isEmpty )
+        numNeighborMines++;
+
+      if ( $scope.validCell(row+1, column+1) && !$scope.getCell(row+1, column+1).isEmpty )
+        numNeighborMines++;
+
+      if ( $scope.validCell(row+1, column) && !$scope.getCell(row+1, column).isEmpty )
+        numNeighborMines++;
+
+      if ( $scope.validCell(row+1, column-1) && !$scope.getCell(row+1, column-1).isEmpty )
+        numNeighborMines++;
+      return numNeighborMines;
+    }
+
+    $scope.calculateNumbers = function() {
+      for (var i in $scope.mineCoordinates) {
+        var mine = i.split(",");
+        var row = parseInt(mine[0]);
+        var column = parseInt(mine[1]);
+
+        if ( $scope.validCell(row, column-1) && $scope.getCell(row, column-1).isEmpty )
+          $scope.getCell(row, column-1).number = $scope.countNeighborMines(row, column-1);
+
+        if ( $scope.validCell(row-1, column-1) && $scope.getCell(row-1, column-1).isEmpty )
+          $scope.getCell(row-1, column-1).number = $scope.countNeighborMines(row-1, column-1);
+
+        if ( $scope.validCell(row-1, column) && $scope.getCell(row-1, column).isEmpty )
+          $scope.getCell(row-1, column).number = $scope.countNeighborMines(row-1, column);
+
+        if ( $scope.validCell(row-1, column+1) && $scope.getCell(row-1, column+1).isEmpty )
+          $scope.getCell(row-1, column+1).number = $scope.countNeighborMines(row-1, column+1);
+
+        if ( $scope.validCell(row, column+1) && $scope.getCell(row, column+1).isEmpty )
+          $scope.getCell(row, column+1).number = $scope.countNeighborMines(row, column+1);
+
+        if ( $scope.validCell(row+1, column+1) && $scope.getCell(row+1, column+1).isEmpty )
+          $scope.getCell(row+1, column+1).number = $scope.countNeighborMines(row+1, column+1);
+
+        if ( $scope.validCell(row+1, column) && $scope.getCell(row+1, column).isEmpty )
+          $scope.getCell(row+1, column).number = $scope.countNeighborMines(row+1, column);
+
+        if ( $scope.validCell(row+1, column-1) && $scope.getCell(row+1, column-1).isEmpty )
+          $scope.getCell(row+1, column-1).number = $scope.countNeighborMines(row+1, column-1);
 
       }
     }
 
-    $scope.generateMines();
+    $scope.unhideAll = function() {
+      for (var i=0; i<10; ++i) {
+        for (var j=0; j<10; ++j) {
+          $scope.getCell(i, j).isHidden = false;
+        }
+      }
+    }
 
-
-
+    $scope.mineField = $scope.createMineField();
+    $scope.mineCoordinates = $scope.generateMines();
+    $scope.calculateNumbers();
   }
 ]);
