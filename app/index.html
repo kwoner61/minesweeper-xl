@@ -12,7 +12,7 @@
     <table class="minefield">
       <tr ng-repeat="row in mineField.rows">
         <td ng-repeat="cell in row.cells">
-          <img ng-src="{{ cell | image }}" ng-click="cell.isHidden=false">
+          <img ng-src="{{ cell | image }}" ng-click="uncover(cell)">
         </td>
       </tr>
     </table>

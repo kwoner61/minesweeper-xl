@@ -3,13 +3,18 @@ var ctrl = angular.module('Ctrl', []);
 ctrl.controller('MainCtrl', ['$scope',
   function($scope) {
 
+    $scope.numRows = 2;
+    $scope.numColumns = 2;
+    $scope.numMines = 1;
+    $scope.numHiddenCells = $scope.numRows * $scope.numColumns;
+
     $scope.createMineField = function() {
       var mineField = {};
       mineField.rows = [];
-      for (var i=0; i<10; ++i) {
+      for (var i=0; i<$scope.numRows; ++i) {
         row = {};
         row.cells = [];
-        for (var j=0; j<10; ++j) {
+        for (var j=0; j<$scope.numColumns; ++j) {
           var cell = {};
           cell.isHidden = true;
           cell.isEmpty = true;
@@ -31,10 +36,10 @@ ctrl.controller('MainCtrl', ['$scope',
 
     $scope.generateMines = function() {
       var mineCoordinates = {};
-      var numMines = 0;
-      while (numMines < 20) {
-        var row = Math.floor(Math.random() * 10);
-        var column = Math.floor(Math.random() * 10);
+      var m = 0;
+      while (m < $scope.numMines) {
+        var row = Math.floor(Math.random() * $scope.numRows);
+        var column = Math.floor(Math.random() * $scope.numColumns);
         var key = "";
         key += row + ",";
         key += column;
@@ -42,14 +47,14 @@ ctrl.controller('MainCtrl', ['$scope',
         if (!mineCoordinates[key]) {
           mineCoordinates[key] = 1;
           $scope.plantMine(row, column);
-          numMines++;
+          m++;
         }
       }
       return mineCoordinates;
     }
 
     $scope.validCell = function(row, column) {
-      return row>=0 && row<10 && column>=0 && column<10;
+      return row>=0 && row<$scope.numRows && column>=0 && column<$scope.numColumns;
     }
 
     $scope.countNeighborMines = function(row, column) {
@@ -114,10 +119,24 @@ ctrl.controller('MainCtrl', ['$scope',
     }
 
     $scope.unhideAll = function() {
-      for (var i=0; i<10; ++i) {
-        for (var j=0; j<10; ++j) {
+      for (var i=0; i<$scope.numRows; ++i) {
+        for (var j=0; j<$scope.numColumns; ++j) {
           $scope.getCell(i, j).isHidden = false;
         }
+      }
+    }
+
+    $scope.uncover = function(cell) {
+      if (!cell.isHidden) return;
+      cell.isHidden = false;
+      $scope.numHiddenCells--;
+      if (!cell.isEmpty) {
+        $scope.unhideAll();
+        alert("Kaboom! You lose!");
+      }
+      else if ($scope.numHiddenCells == $scope.numMines) {
+        $scope.unhideAll();
+        alert("You won!");
       }
     }
 
