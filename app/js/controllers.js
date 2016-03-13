@@ -3,9 +3,10 @@ var ctrl = angular.module('Ctrl', []);
 ctrl.controller('MainCtrl', ['$scope',
   function($scope) {
 
-    $scope.numRows = 20;
-    $scope.numColumns = 20;
-    $scope.numMines = 1;
+    $scope.paused = false;
+    $scope.numRows = 9;
+    $scope.numColumns = 9;
+    $scope.numMines = 10;
     $scope.numHiddenCells = $scope.numRows * $scope.numColumns;
 
     $scope.createMineField = function() {
@@ -120,12 +121,31 @@ ctrl.controller('MainCtrl', ['$scope',
       }
     }
 
+    $scope.mineField = $scope.createMineField();
+    $scope.mineCoordinates = $scope.generateMines();
+    $scope.calculateNumbers();
+
     $scope.unhideAll = function() {
       for (var i=0; i<$scope.numRows; ++i) {
         for (var j=0; j<$scope.numColumns; ++j) {
           $scope.getCell(i, j).isHidden = false;
         }
       }
+    }
+
+    $scope.showAllMines = function() {
+      for (var i in $scope.mineCoordinates) {
+        var mine = i.split(",");
+        var row = parseInt(mine[0]);
+        var column = parseInt(mine[1]);
+        $scope.getCell(row, column).isHidden = false;
+      }
+    }
+
+    $scope.startNewGame = function() {
+      $scope.mineField = $scope.createMineField();
+      $scope.mineCoordinates = $scope.generateMines();
+      $scope.calculateNumbers();
     }
 
     $scope.uncoverRecNeighbors = function(row, column) {
@@ -198,10 +218,13 @@ ctrl.controller('MainCtrl', ['$scope',
     }
 
     $scope.uncover = function(cell) {
-      if (!cell.isHidden) return;
+      if (!cell.isHidden || $scope.paused) return;
       if (!cell.isEmpty) {
-        $scope.unhideAll();
-        alert("Kaboom! You lose!");
+        cell.isHidden = false;
+        cell.number = -1;
+        $scope.showAllMines();
+        $scope.paused = true;
+        return;
       }
       cell.isHidden = false;
       if (cell.number > 0)
@@ -215,8 +238,5 @@ ctrl.controller('MainCtrl', ['$scope',
       }
     }
 
-    $scope.mineField = $scope.createMineField();
-    $scope.mineCoordinates = $scope.generateMines();
-    $scope.calculateNumbers();
   }
 ]);
