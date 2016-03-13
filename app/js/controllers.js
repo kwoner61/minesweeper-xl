@@ -22,6 +22,7 @@ ctrl.controller('MainCtrl', ['$scope',
           cell.number = 0;
           cell.rowNum = i;
           cell.columnNum = j;
+          cell.isFlagged = false;
           row.cells.push(cell);
         }
         mineField.rows.push(row);
@@ -142,6 +143,15 @@ ctrl.controller('MainCtrl', ['$scope',
       }
     }
 
+    $scope.flagAllMines = function() {
+      for (var i in $scope.mineCoordinates) {
+        var mine = i.split(",");
+        var row = parseInt(mine[0]);
+        var column = parseInt(mine[1]);
+        $scope.getCell(row, column).isFlagged = true;
+      }
+    }
+
     $scope.startNewGame = function() {
       $scope.mineField = $scope.createMineField();
       $scope.mineCoordinates = $scope.generateMines();
@@ -233,8 +243,8 @@ ctrl.controller('MainCtrl', ['$scope',
         $scope.numHiddenCells -= 1+$scope.uncoverRec(cell.rowNum, cell.columnNum);
 
       if ($scope.numHiddenCells == $scope.numMines) {
-        $scope.unhideAll();
-        alert("You won!");
+        $scope.paused = true;
+        $scope.flagAllMines();
       }
     }
 
