@@ -3,9 +3,9 @@ var ctrl = angular.module('Ctrl', []);
 ctrl.controller('MainCtrl', ['$scope',
   function($scope) {
 
-    $scope.numRows = 10;
-    $scope.numColumns = 10;
-    $scope.numMines = 8;
+    $scope.numRows = 20;
+    $scope.numColumns = 20;
+    $scope.numMines = 1;
     $scope.numHiddenCells = $scope.numRows * $scope.numColumns;
 
     $scope.createMineField = function() {
