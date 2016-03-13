@@ -3,9 +3,9 @@ var ctrl = angular.module('Ctrl', []);
 ctrl.controller('MainCtrl', ['$scope',
   function($scope) {
 
-    $scope.numRows = 2;
-    $scope.numColumns = 2;
-    $scope.numMines = 1;
+    $scope.numRows = 10;
+    $scope.numColumns = 10;
+    $scope.numMines = 8;
     $scope.numHiddenCells = $scope.numRows * $scope.numColumns;
 
     $scope.createMineField = function() {
@@ -19,6 +19,8 @@ ctrl.controller('MainCtrl', ['$scope',
           cell.isHidden = true;
           cell.isEmpty = true;
           cell.number = 0;
+          cell.rowNum = i;
+          cell.columnNum = j;
           row.cells.push(cell);
         }
         mineField.rows.push(row);
@@ -126,15 +128,88 @@ ctrl.controller('MainCtrl', ['$scope',
       }
     }
 
+    $scope.uncoverRecNeighbors = function(row, column) {
+      var numUncoveredCells = 0;
+      var currentCell = $scope.getCell(row, column);
+
+      if (!currentCell.isHidden) return 0;
+      if (currentCell.number > 0) {
+        currentCell.isHidden = false;
+        return 1;
+      }
+      currentCell.isHidden = false;
+      numUncoveredCells = 1;
+
+      if ( $scope.validCell(row, column-1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row, column-1);
+
+      if ( $scope.validCell(row-1, column-1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row-1, column-1);
+
+      if ( $scope.validCell(row-1, column) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row-1, column);
+
+      if ( $scope.validCell(row-1, column+1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row-1, column+1);
+
+      if ( $scope.validCell(row, column+1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row, column+1);
+
+      if ( $scope.validCell(row+1, column+1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row+1, column+1);
+
+      if ( $scope.validCell(row+1, column) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row+1, column);
+
+      if ( $scope.validCell(row+1, column-1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row+1, column-1);
+
+      return numUncoveredCells;
+    }
+
+    $scope.uncoverRec = function(row, column) {
+      var numUncoveredCells = 0;
+
+      if ( $scope.validCell(row, column-1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row, column-1);
+
+      if ( $scope.validCell(row-1, column-1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row-1, column-1);
+
+      if ( $scope.validCell(row-1, column) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row-1, column);
+
+      if ( $scope.validCell(row-1, column+1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row-1, column+1);
+
+      if ( $scope.validCell(row, column+1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row, column+1);
+
+      if ( $scope.validCell(row+1, column+1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row+1, column+1);
+
+      if ( $scope.validCell(row+1, column) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row+1, column);
+
+      if ( $scope.validCell(row+1, column-1) )
+        numUncoveredCells += $scope.uncoverRecNeighbors(row+1, column-1);
+
+      return numUncoveredCells;
+    }
+
     $scope.uncover = function(cell) {
       if (!cell.isHidden) return;
-      cell.isHidden = false;
-      $scope.numHiddenCells--;
       if (!cell.isEmpty) {
         $scope.unhideAll();
         alert("Kaboom! You lose!");
       }
-      else if ($scope.numHiddenCells == $scope.numMines) {
+      cell.isHidden = false;
+      if (cell.number > 0)
+        $scope.numHiddenCells--;
+      else
+        $scope.numHiddenCells -= 1+$scope.uncoverRec(cell.rowNum, cell.columnNum);
+
+      if ($scope.numHiddenCells == $scope.numMines) {
         $scope.unhideAll();
         alert("You won!");
       }
