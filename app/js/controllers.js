@@ -3,9 +3,9 @@ var ctrl = angular.module('Ctrl', []);
 ctrl.controller('MainCtrl', ['$scope',
   function($scope) {
 
-    $scope.numRows = 20;
-    $scope.numColumns = 20;
-    $scope.numMines = 1;
+    $scope.numRows = 10;
+    $scope.numColumns = 10;
+    $scope.numMines = 10;
     $scope.numHiddenCells = $scope.numRows * $scope.numColumns;
 
     $scope.createMineField = function() {
@@ -21,6 +21,7 @@ ctrl.controller('MainCtrl', ['$scope',
           cell.number = 0;
           cell.rowNum = i;
           cell.columnNum = j;
+          cell.isFlagged = false;
           row.cells.push(cell);
         }
         mineField.rows.push(row);
@@ -128,6 +129,15 @@ ctrl.controller('MainCtrl', ['$scope',
       }
     }
 
+    $scope.markMines = function() {
+      for (var i=0; i<$scope.numRows; ++i) {
+        for (var j=0; j<$scope.numColumns; ++j) {
+          if ( !$scope.getCell(i, j).isEmpty )
+            $scope.getCell(i, j).isFlagged = true;
+        }
+      }
+    }
+
     $scope.uncoverRecNeighbors = function(row, column) {
       var numUncoveredCells = 0;
       var currentCell = $scope.getCell(row, column);
@@ -202,6 +212,7 @@ ctrl.controller('MainCtrl', ['$scope',
       if (!cell.isEmpty) {
         $scope.unhideAll();
         alert("Kaboom! You lose!");
+        return;
       }
       cell.isHidden = false;
       if (cell.number > 0)
