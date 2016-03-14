@@ -12,3 +12,10 @@ filters.filter('image',
       return "./img/number-" + cell.number + ".png";
     }
 });
+
+filters.filter('faceImage',
+  function() {
+    return function(face) {
+      return "./img/face-" + face + ".png";
+    }
+});

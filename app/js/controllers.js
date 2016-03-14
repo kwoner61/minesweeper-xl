@@ -7,6 +7,7 @@ ctrl.controller('MainCtrl', ['$scope',
     $scope.numRows = 9;
     $scope.numColumns = 9;
     $scope.numMines = 10;
+    $scope.face = "happy";
 
     $scope.createMineField = function() {
       var mineField = {};
@@ -176,6 +177,7 @@ ctrl.controller('MainCtrl', ['$scope',
       $scope.mineCoordinates = $scope.generateMines();
       $scope.calculateNumbers();
       $scope.paused = false;
+      $scope.face = "happy";
     }
 
     $scope.uncoverRecNeighbors = function(row, column) {
@@ -245,6 +247,7 @@ ctrl.controller('MainCtrl', ['$scope',
         cell.number = -1;
         $scope.showAllMines();
         $scope.paused = true;
+        $scope.face = "sad";
         return;
       }
       cell.isHidden = false;
@@ -254,6 +257,7 @@ ctrl.controller('MainCtrl', ['$scope',
       if ( $scope.checkWinCondition() ) {
         $scope.paused = true;
         $scope.flagAllMines();
+        $scope.face = "cool";
       }
     }
 
