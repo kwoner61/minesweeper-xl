@@ -163,6 +163,7 @@ ctrl.controller('MainCtrl', ['$scope',
       $scope.mineField = $scope.createMineField();
       $scope.mineCoordinates = $scope.generateMines();
       $scope.calculateNumbers();
+      $scope.paused = false;
     }
 
     $scope.uncoverRecNeighbors = function(row, column) {
