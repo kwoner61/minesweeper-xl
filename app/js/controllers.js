@@ -135,11 +135,18 @@ ctrl.controller('MainCtrl', ['$scope',
     }
 
     $scope.showAllMines = function() {
-      for (var i in $scope.mineCoordinates) {
-        var mine = i.split(",");
-        var row = parseInt(mine[0]);
-        var column = parseInt(mine[1]);
-        $scope.getCell(row, column).isHidden = false;
+      for (var i=0; i<$scope.numRows; ++i) {
+        for (var j=0; j<$scope.numColumns; ++j) {
+          var cell = $scope.getCell(i, j);
+
+          if (!cell.isFlagged && !cell.isEmpty) {
+            cell.isHidden = false;
+          }
+          else if (cell.isFlagged && cell.isEmpty) {
+            cell.number = -2;
+            cell.isHidden = false;
+          }
+        }
       }
     }
 
@@ -246,6 +253,10 @@ ctrl.controller('MainCtrl', ['$scope',
         $scope.paused = true;
         $scope.flagAllMines();
       }
+    }
+
+    $scope.flag = function(cell) {
+      cell.isFlagged = !cell.isFlagged;
     }
 
   }
