@@ -236,7 +236,7 @@ ctrl.controller('MainCtrl', ['$scope',
     }
 
     $scope.uncover = function(cell) {
-      if (!cell.isHidden || $scope.paused) return;
+      if (!cell.isHidden || $scope.paused || cell.isFlagged) return;
       if (!cell.isEmpty) {
         cell.isHidden = false;
         cell.number = -1;
@@ -257,7 +257,8 @@ ctrl.controller('MainCtrl', ['$scope',
     }
 
     $scope.flag = function(cell) {
-      cell.isFlagged = !cell.isFlagged;
+      if (cell.isHidden && !$scope.paused)
+        cell.isFlagged = !cell.isFlagged;
     }
 
   }
