@@ -1,8 +1,19 @@
-.minefield {
-    line-height:0;
-    border-spacing:0;
+.main-container {
+  width: 432px;
+  height: 216px;
 }
-
+.minefield {
+  line-height:0;
+  border-spacing:0;
+  float: left;
+  width: 216px;
+  height: 216px;
+}
 .minefield td {
-    padding:0
+  padding:0
+}
+.smiley-container {
+  width: 216px;
+  height: 216px;
+  float: left;
 }
