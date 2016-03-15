@@ -8,6 +8,7 @@ ctrl.controller('MainCtrl', ['$scope',
     $scope.numColumns = 9;
     $scope.numMines = 10;
     $scope.face = "happy";
+    $scope.firstClick = "";
 
     $scope.createMineField = function() {
       var mineField = {};
@@ -47,8 +48,7 @@ ctrl.controller('MainCtrl', ['$scope',
         var key = "";
         key += row + ",";
         key += column;
-
-        if (!mineCoordinates[key]) {
+        if (!mineCoordinates[key] && key != $scope.firstClick) {
           mineCoordinates[key] = 1;
           $scope.plantMine(row, column);
           m++;
@@ -123,8 +123,7 @@ ctrl.controller('MainCtrl', ['$scope',
     }
 
     $scope.mineField = $scope.createMineField();
-    $scope.mineCoordinates = $scope.generateMines();
-    $scope.calculateNumbers();
+    $scope.mineCoordinates = {};
 
     $scope.unhideAll = function() {
       for (var i=0; i<$scope.numRows; ++i) {
@@ -174,10 +173,10 @@ ctrl.controller('MainCtrl', ['$scope',
 
     $scope.startNewGame = function() {
       $scope.mineField = $scope.createMineField();
-      $scope.mineCoordinates = $scope.generateMines();
-      $scope.calculateNumbers();
+      $scope.mineCoordinates = {};
       $scope.paused = false;
       $scope.face = "happy";
+      $scope.firstClick = "";
     }
 
     $scope.uncoverRecNeighbors = function(row, column) {
@@ -241,6 +240,11 @@ ctrl.controller('MainCtrl', ['$scope',
     }
 
     $scope.uncover = function(cell) {
+      if (!$scope.firstClick) {
+        $scope.firstClick = cell.rowNum + "," + cell.columnNum;
+        $scope.mineCoordinates = $scope.generateMines();
+        $scope.calculateNumbers();
+      }
       if (!cell.isHidden || $scope.paused || cell.isFlagged) return;
       if (!cell.isEmpty) {
         cell.isHidden = false;
